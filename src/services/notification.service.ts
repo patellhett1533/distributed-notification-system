@@ -11,7 +11,7 @@ const sendNotification = async ({ message, priority, send_time }: SendNotificati
     topic: "notifications",
     messages: [{ value: JSON.stringify({ message, priority, send_time }) }],
   });
-  await Notification.create({ message, priority, send_time });
+  await Notification.create({ message, type: "test", priority, send_time, user_id: "123" });
   await producer.disconnect();
 };
 

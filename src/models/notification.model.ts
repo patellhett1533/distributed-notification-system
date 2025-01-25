@@ -14,9 +14,9 @@ const NotificationSchema: Schema = new Schema(
   {
     message: { type: String, required: true },
     type: { type: String, required: true },
-    priority: { type: Number, required: true, min: 1, max: 5 },
-    sendTime: { type: Date, required: true },
-    userId: { type: String, required: true },
+    priority: { type: String, required: true, enum: ["low", "medium", "high"] },
+    send_time: { type: Date, required: true },
+    user_id: { type: String, required: true },
   },
   {
     timestamps: true,
