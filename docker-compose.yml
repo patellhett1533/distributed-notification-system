@@ -1,21 +1,25 @@
 version: "3"
 services:
   app:
+    container_name: notification_system_api
     build: .
+    env_file:
+      - ./.env
     ports:
-      - "5000:5000"
+      - ${NODE_LOCAL_PORT}:${NODE_DOCKER_PORT}
     depends_on:
       - mongodb
       - kafka
       - elasticsearch
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/notification_system
-      - KAFKA_BROKERS=kafka:9092
-      - ELASTICSEARCH_NODE=http://elasticsearch:9200
+      - MONGODB_URI=mongodb://mongodb:${MONGODB_DOCKER_PORT}/notification_system
+      - KAFKA_BROKERS=kafka:${KAFKA_DOCKER_PORT}
+      - ELASTICSEARCH_NODE=http://elasticsearch:${ELASTIC_DOCKER_PORT}
     restart: on-failure
     command: sh -c "sleep 30 && npm run start"
 
   mongodb:
+    container_name: notification_system_mongodb
     image: mongo:4.2.1-bionic
     restart: always
     env_file:
@@ -25,23 +29,65 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PASSWORD}
     ports:
       - ${MONGODB_LOCAL_PORT}:${MONGODB_DOCKER_PORT}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - default
 
   kafka:
+    container_name: notification_system_kafka
     image: wurstmeister/kafka:latest
+    env_file:
+      - ./.env
     ports:
-      - "9092:9092"
+      - ${KAFKA_LOCAL_PORT}:${KAFKA_DOCKER_PORT}
     environment:
       KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_DOCKER_PORT}
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - default
 
   zookeeper:
+    container_name: notification_system_zookeeper
     image: wurstmeister/zookeeper:latest
+    env_file:
+      - ./.env
     ports:
-      - "2181:2181"
+      - ${ZOOKEEPER_LOCAL_PORT}:${ZOOKEEPER_DOCKER_PORT}
+    volumes:
+      - zookeeper_data:/data
+    networks:
+      - default
 
   elasticsearch:
+    container_name: notification_system_elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    env_file:
+      - ./.env
     ports:
-      - "9200:9200"
+      - ${ELASTICS_LOCAL_PORT}:${ELASTIC_DOCKER_PORT}
     environment:
       - discovery.type=single-node
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - default
+
+volumes:
+  mongodb_data:
+    driver: local
+
+  kafka_data:
+    driver: local
+
+  zookeeper_data:
+    driver: local
+
+  elasticsearch_data:
+    driver: local
+
+networks:
+  default:
+    driver: bridge
