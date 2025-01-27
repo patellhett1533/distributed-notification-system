@@ -2,7 +2,7 @@ import { Kafka, Producer, Consumer } from "kafkajs";
 
 const kafka = new Kafka({
   clientId: "notification-service",
-  brokers: ["kafka:9092"],
+  brokers: ["kafka:15809"],
 });
 
 const producer: Producer = kafka.producer();

@@ -67,7 +67,7 @@ services:
     env_file:
       - ./.env
     ports:
-      - ${ELASTICS_LOCAL_PORT}:${ELASTIC_DOCKER_PORT}
+      - ${ELASTIC_LOCAL_PORT}:${ELASTIC_DOCKER_PORT}
     environment:
       - discovery.type=single-node
     volumes:
