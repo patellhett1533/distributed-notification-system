@@ -16,7 +16,7 @@ services:
       - KAFKA_BROKERS=kafka:${KAFKA_DOCKER_PORT}
       - ELASTICSEARCH_NODE=http://elasticsearch:${ELASTIC_DOCKER_PORT}
     restart: on-failure
-    command: sh -c "sleep 30 && npm run start"
+    command: sh -c "npm run start"
 
   mongodb:
     container_name: notification_system_mongodb
@@ -32,7 +32,7 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - default
+      - notification-network
 
   kafka:
     container_name: notification_system_kafka
@@ -47,7 +47,7 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
     networks:
-      - default
+      - notification-network
 
   zookeeper:
     container_name: notification_system_zookeeper
@@ -59,7 +59,7 @@ services:
     volumes:
       - zookeeper_data:/data
     networks:
-      - default
+      - notification-network
 
   elasticsearch:
     container_name: notification_system_elasticsearch
@@ -73,7 +73,7 @@ services:
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
-      - default
+      - notification-network
 
 volumes:
   mongodb_data:
@@ -89,5 +89,5 @@ volumes:
     driver: local
 
 networks:
-  default:
+  notification-network:
     driver: bridge
