@@ -13,7 +13,7 @@ services:
       - elasticsearch
     environment:
       - MONGODB_URI=mongodb://mongodb:${MONGODB_DOCKER_PORT}/notification_system
-      - KAFKA_BROKERS=kafka:${KAFKA_DOCKER_PORT}
+      - KAFKA_BROKERS=kafka:${KAFKA_LOCAL_PORT}
       - ELASTICSEARCH_NODE=http://elasticsearch:${ELASTIC_DOCKER_PORT}
     restart: on-failure
     command: sh -c "npm run start"
@@ -31,8 +31,6 @@ services:
       - ${MONGODB_LOCAL_PORT}:${MONGODB_DOCKER_PORT}
     volumes:
       - mongodb_data:/data/db
-    networks:
-      - notification-network
 
   kafka:
     container_name: notification_system_kafka
@@ -46,8 +44,6 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:${ZOOKEEPER_DOCKER_PORT}
     volumes:
       - kafka_data:/var/lib/kafka/data
-    networks:
-      - notification-network
 
   zookeeper:
     container_name: notification_system_zookeeper
@@ -58,8 +54,6 @@ services:
       - ${ZOOKEEPER_LOCAL_PORT}:${ZOOKEEPER_DOCKER_PORT}
     volumes:
       - zookeeper_data:/data
-    networks:
-      - notification-network
 
   elasticsearch:
     container_name: notification_system_elasticsearch
@@ -72,8 +66,6 @@ services:
       - discovery.type=single-node
     volumes:
       - elasticsearch_data:/usr/share/elasticsearch/data
-    networks:
-      - notification-network
 
 volumes:
   mongodb_data:
@@ -87,7 +79,3 @@ volumes:
 
   elasticsearch_data:
     driver: local
-
-networks:
-  notification-network:
-    driver: bridge
