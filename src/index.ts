@@ -36,14 +36,6 @@ app.use(passport.initialize());
 passport.use("jwt", jwtStrategy);
 
 app.use("/v1", routes);
-app.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  await notificationService.sendNotification({
-    message: "Welcome to the app",
-    priority: "high",
-    send_time: new Date(),
-  });
-  res.send("Hello World!");
-});
 
 consumeNotifications("notifications").catch(err => console.error("Kafka Consumer Error:", err));
 

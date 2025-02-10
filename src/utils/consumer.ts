@@ -7,6 +7,7 @@ export const consumeNotifications = async (topic: string) => {
 
   await consumer.run({
     eachMessage: async ({ message }) => {
+      // write logic for sending notification to frontend and save notification in database
       console.log(`Received notification: ${message.value?.toString()}`);
     },
   });
